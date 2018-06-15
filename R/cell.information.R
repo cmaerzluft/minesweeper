@@ -39,5 +39,5 @@ cell.information <- function(game) {
   return(list(uncovered_neighbors = uncovered_neighbors,
               flagged_neighbors = flagged_neighbors,
               covered_neighbors = covered_neighbors,
-              remainin_mines = remaining_mines))
+              remaining_mines = remaining_mines))
 }

@@ -102,20 +102,50 @@ mine.probability <- function(game) {
   #         because this one has less strict rules for working, it can help reveal cases for iv) where iv) couldn't if
   #         iv) had gone first
   # Only need to do for cells that have opened neighbors
-  
+  # # Neighbor IDs
   # cell.ids <- expand.grid(1:board.rows, 1:board.cols)
   # tmp <- matrix(paste(cell.ids[, 1], cell.ids[, 2], sep = "x"), ncol = board.cols)
-  # tmp <- game.info$remaining.mines
-  # tmp[cell.type == 1 | cell.type == 2] <- NA
-  # neighbors <- array(NA, dim = c(board.rows, board.cols, 9))
-  # neighbors[-1, -1, 1] <- tmp[-board.rows, -board.cols] # NE
-  # neighbors[-1, , 2] <- tmp[-board.rows, ]              # N
-  # neighbors[-1, -board.cols, 3] <- tmp[-board.rows, -1] # NW
-  # neighbors[, -1, 4] <- tmp[, -board.cols]              #  E
-  # neighbors[, -board.cols, 6] <- tmp[, -1]              #  W
-  # neighbors[-board.rows, -1, 7] <- tmp[-1, -board.cols] # SE
-  # neighbors[-board.rows, , 8] <- tmp[-1, ]              # S
-  # neighbors[-board.rows, -board.cols, 9] <- tmp[-1, -1] # SW
+  # neighbors.ids <- array(NA, dim = c(board.rows, board.cols, 9))
+  # neighbors.ids[-1, -1, 1] <- tmp[-board.rows, -board.cols] # NE
+  # neighbors.ids[-1, , 2] <- tmp[-board.rows, ]              # N
+  # neighbors.ids[-1, -board.cols, 3] <- tmp[-board.rows, -1] # NW
+  # neighbors.ids[, -1, 4] <- tmp[, -board.cols]              #  E
+  # neighbors.ids[, , 5] <- tmp                               # cell reference
+  # neighbors.ids[, -board.cols, 6] <- tmp[, -1]              #  W
+  # neighbors.ids[-board.rows, -1, 7] <- tmp[-1, -board.cols] # SE
+  # neighbors.ids[-board.rows, , 8] <- tmp[-1, ]              # S
+  # neighbors.ids[-board.rows, -board.cols, 9] <- tmp[-1, -1] # SW
+  # # Neighbor Mines
+  # tmp <- game.info$remaining_mines
+  # neighbors.rmi <- array(NA, dim = c(board.rows, board.cols, 9))
+  # neighbors.rmi[-1, -1, 1] <- tmp[-board.rows, -board.cols] # NE
+  # neighbors.rmi[-1, , 2] <- tmp[-board.rows, ]              # N
+  # neighbors.rmi[-1, -board.cols, 3] <- tmp[-board.rows, -1] # NW
+  # neighbors.rmi[, -1, 4] <- tmp[, -board.cols]              #  E
+  # neighbors.rmi[, , 5] <- tmp                               # remaining mines
+  # neighbors.rmi[, -board.cols, 6] <- tmp[, -1]              #  W
+  # neighbors.rmi[-board.rows, -1, 7] <- tmp[-1, -board.cols] # SE
+  # neighbors.rmi[-board.rows, , 8] <- tmp[-1, ]              # S
+  # neighbors.rmi[-board.rows, -board.cols, 9] <- tmp[-1, -1] # SW
+  # 
+  # # Will be looped? maybe vectorized
+  # ind <- which(neighbors.rmi > 0 & !is.na(neighbors.rmi), arr.ind = T)
+  # ind <- ind[which(ind[, 1] == 2 & ind[, 2] == 14), ]
+  # large.neighbor <- ind[which(neighbors.rmi[ind] == max(neighbors.rmi[ind])), , drop = FALSE]
+  # small.neighbor <- ind[which(neighbors.rmi[ind] == min(neighbors.rmi[ind])), , drop = FALSE]
+  # diff <- neighbors.rmi[large.neighbor] - neighbors.rmi[small.neighbor]
+  # 
+  # # need shared neighbors
+  # ln.row <- as.numeric(gsub("x[0-9]+", "", neighbors.ids[large.neighbor]))
+  # ln.col <- as.numeric(gsub("[0-9]+x", "", neighbors.ids[large.neighbor]))
+  # large.neighbor.rows <- (max(1, ln.row - 1)):(min(dim(game$cover)[1], ln.row + 1))
+  # large.neighbor.cols <- (max(1, ln.col - 1)):(min(dim(game$cover)[2], ln.col + 1))
+  # large.neighbor <- expand.grid(large.neighbor.rows, large.neighbor.cols)
+  # sn.row <- as.numeric(gsub("x[0-9]+", "", neighbors.ids[small.neighbor]))
+  # sn.col <- as.numeric(gsub("[0-9]+x", "", neighbors.ids[small.neighbor]))
+  # small.neighbor.rows <- (max(1, sn.row - 1)):(min(dim(game$cover)[1], sn.row + 1))
+  # small.neighbor.cols <- (max(1, sn.col - 1)):(min(dim(game$cover)[2], sn.col + 1))
+  # small.neighbor <- expand.grid(small.neighbor.rows, small.neighbor.cols)
   
   #     iv) use logic (written on paper) to determine that a cell(s) cannot have a bomb(s)
   #   b) Certain probability:
