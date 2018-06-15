@@ -35,7 +35,9 @@ cell.information <- function(game) {
   covered_neighbors <- sum.neighbors(+group)
   covered_neighbors[group] <- covered_neighbors[group] - 1
   # Remaining Mines
-  remaining_mines <- game$cover - flagged_neighbors
+  remaining_mines <- matrix(NA, ncol = ncol(game$cover), nrow = nrow(game$cover))
+  group <- game$cover != "X" & !is.na(game$cover)
+  remaining_mines[group] <- as.numeric(game$cover[group]) - flagged_neighbors[group]
   return(list(uncovered_neighbors = uncovered_neighbors,
               flagged_neighbors = flagged_neighbors,
               covered_neighbors = covered_neighbors,
