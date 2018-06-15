@@ -3,24 +3,41 @@
 #  Title: Play Minesweeper
 #  Author: Christopher Maerzluft
 #  Description: Plays the minesweeper created using the scripts in the library directory
-#  Last Edit: 9/22/17
+#  Last Edit: 6/15/18
 #                                                                                                                       #
 #########################################################################################################################
+#
+# Summary: This is really just for testing at the moment. Use this script to run and play minesweeper. 
+# 
+# To do:
+#   1) Need to finish mine.probability()
+#   2) Need a function that randomly selects a cell to open (for use when the solver has to guess)
+#   3) Wrap the while loop code into a solver function
+#   4) Create Machine learning algorithm that doesn't use the solver to play (this is really just to see if I can)
+#   5) See if we can improve speed and memory of all the functions
+#
+########################################################################################################################
 ##### Libraries, Directories, and Other #####
+# Clean environment
 rm(list = ls(all = TRUE))
 gc()
-setwd("~/Desktop/Miscellaneous/Data Blog/Minesweeper")
-library.dir   <- "Library/"
+# Load functions
+library.dir   <- "R/"
 library <- file.path(library.dir, "library.R")
 source(library)
 
 ##### Start game #####
-set.seed(1)
+set.seed(1) # use set.seed(1) to compare to manual solution done below
 first_move <- c(sample(1:16, 1), sample(1:30, 1))
 game <- create.minesweeper(difficulty = "Expert",
                            first_move = first_move,
                            guarantee = "Zero")
+# Will run the probability function in create.minesweeper when it is done but want it here for testing
+game <- mine.probability(game)
 
+# Solver
+# Add a statement for guessing (only when no cells to flag or open)
+# Track when we guess, iterations, and probability of cell we guess in
 emergency.stop <- 100
 while (game$loser == FALSE & emergency.stop > 0) {
   print(emergency.stop)
@@ -43,19 +60,10 @@ while (game$loser == FALSE & emergency.stop > 0) {
   }
   game <- mine.probability(game)
   print(game$cover)
-  
 }
 
-
-
-
-# To do:
-# write up a blog entry for what I did to create the create.minesweeper() function
-# Create a probability of bomb calculator
-# Create a solver
-# Create a machine learning algorithm
-
 ##### Solve game manually #####
+# This only works for set.seed(1)
 set.seed(1)
 first_move <- c(sample(1:16, 1), sample(1:30, 1))
 game <- create.minesweeper(difficulty = "Expert",

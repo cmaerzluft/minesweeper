@@ -1,17 +1,20 @@
-########################################################################################################################
-#
-# Title: Click on Board
-# Author: Chris Maerzluft
-# Date: 8/7/17
-#
-########################################################################################################################
+#########################################################################################################################
+#                                                                                                                       #
+#  Title: Click on Board
+#  Author: Chris Maerzluft
+#  Description: Acts as a mouse click for minesweeper, includes the judging of the game
+#  Last Edit: 6/15/18
+#                                                                                                                       #
+#########################################################################################################################
 #
 # Summary: The takes a click location and plays it on the current board, opening any relevant cells including those
-#   surround any zeros and the entire board if we lose.
+#   surround any zeros and the entire board if we lose. Determines whether the game has been won or lost
 #
 # Inputs:
-#   click - the location of the click, will run convert.location so it can be in any format accepted by that function
-#   game - the game board (with cover, board, and whether it is a winner or loser)
+#   position        The coordinates as a vector the user would like to click on. e.g. c(row, matrix)
+#   click           Whether the user would like to "left" click (open a cell) or "right" click (flag as bomb so left click
+#                     won't work on it)
+#   game            The game board the user is playing on
 #
 # Outputs:
 #   The game board with the clicked tile (on other relevant tiles) revealed on the cover piece. In the event of a bomb 
@@ -20,14 +23,15 @@
 #
 ########################################################################################################################
 click.on.board <- function(position, click = "left", game) {
+  # Store initial values
   selected_cover <- game$cover[position[1], position[2]]
   selected_board <- game$board[position[1], position[2]]
   
   ##### Click that can't do anything #####
-  # left click on flag or right click on an opened piece or trying to play on a lost game
+  # left click on flag or right click on an opened piece or trying to play on a finished game
   if ((click == "left" & selected_cover == "X" & !is.na(selected_cover)) | 
       (click == "right" & selected_cover != "X" & !is.na(selected_cover)) |
-      game$loser == TRUE) {
+      game$loser == TRUE | game$winner == TRUE) {
     return(game)
   }
   
@@ -75,7 +79,7 @@ click.on.board <- function(position, click = "left", game) {
       # Record what has been opened
       opened <- opened | non_zeros
       opened[focus[1, 1], focus[1, 2]] <- TRUE
-      # Find next set of values to explore
+      # Check for more pieces to open
       zeros <- game$cover == 0 & !is.na(game$cover) & !opened
       non_zeros <- game$cover != 0 & !is.na(game$cover) & !opened
       focus <- matrix(which(zeros, arr.ind = TRUE), ncol = 2)
@@ -91,7 +95,8 @@ click.on.board <- function(position, click = "left", game) {
     print(game)
   }
 
-  Sys.sleep(0.25)
+  # More moving slowly through game in a loop
+  # Sys.sleep(0.25)
   return(game)
 }
 
